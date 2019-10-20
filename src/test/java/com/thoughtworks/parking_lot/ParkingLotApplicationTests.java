@@ -38,13 +38,14 @@ public class ParkingLotApplicationTests {
     @BeforeEach
     public void setUp(){
         parkingLot = new ParkingLot();
-        parkingLot.setName("parking lot");
+        parkingLot.setName("park");
         parkingLot.setCapacity(10);
         parkingLot.setLocation("wow");
     }
 
     @Test
     public void addParkingLot() throws Exception {
+        when(parkingLotService.save(parkingLot)).thenReturn(parkingLot);
         ResultActions resultActions = mockMvc.perform(post("/parkingLot")
         .content(asJsonString(parkingLot))
         .contentType(MediaType.APPLICATION_JSON));
@@ -64,6 +65,25 @@ public class ParkingLotApplicationTests {
     public void getParkingLot() throws Exception {
         when(parkingLotService.findOneById(1L)).thenReturn(parkingLot);
         ResultActions resultActions = mockMvc.perform(get("/parkingLot/1"));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAllParkingLot() throws Exception {
+        ResultActions resultActions = mockMvc.perform(get("/parkingLot"));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void updateParkingLot() throws Exception {
+        ParkingLot newParkingLot = new ParkingLot();
+        newParkingLot.setCapacity(50);
+        when(parkingLotService.findByNameContaining("park")).thenReturn(parkingLot);
+        ResultActions resultActions = mockMvc.perform(patch("/parkingLot/park")
+                .content(asJsonString(newParkingLot))
+                .contentType(MediaType.APPLICATION_JSON));
 
         resultActions.andExpect(status().isOk());
     }
