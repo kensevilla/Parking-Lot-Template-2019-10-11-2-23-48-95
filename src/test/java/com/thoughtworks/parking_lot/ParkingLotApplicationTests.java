@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -45,10 +45,25 @@ public class ParkingLotApplicationTests {
 
     @Test
     public void addParkingLot() throws Exception {
-        when(parkingLotService.save(parkingLot)).thenReturn(parkingLot);
         ResultActions resultActions = mockMvc.perform(post("/parkingLot")
         .content(asJsonString(parkingLot))
         .contentType(MediaType.APPLICATION_JSON));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void deleteParkingLot() throws Exception {
+        when(parkingLotService.findOneById(1L)).thenReturn(parkingLot);
+        ResultActions resultActions = mockMvc.perform(delete("/parkingLot/1"));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void getParkingLot() throws Exception {
+        when(parkingLotService.findOneById(1L)).thenReturn(parkingLot);
+        ResultActions resultActions = mockMvc.perform(get("/parkingLot/1"));
 
         resultActions.andExpect(status().isOk());
     }
