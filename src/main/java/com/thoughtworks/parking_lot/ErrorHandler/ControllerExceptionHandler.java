@@ -18,4 +18,11 @@ public class ControllerExceptionHandler {
     public CustomError handleParkingLotFullException(ParkingLotFullException e){
         return new CustomError(500, e.getMessage());
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public CustomError handleNotFoundException(NotFoundException e){
+        return new CustomError(404, e.getMessage());
+    }
 }

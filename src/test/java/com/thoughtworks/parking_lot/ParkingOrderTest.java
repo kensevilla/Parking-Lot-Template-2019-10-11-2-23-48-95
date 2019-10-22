@@ -1,10 +1,12 @@
 package com.thoughtworks.parking_lot;
 
+import com.thoughtworks.parking_lot.Exception.ParkingLotFullException;
 import com.thoughtworks.parking_lot.controller.OrderController;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.model.ParkingOrder;
 import com.thoughtworks.parking_lot.service.OrderService;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +18,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,11 +69,26 @@ public class ParkingOrderTest {
 
     @Test
     public void addParkingOrderWhenParkingLotExceedCapacity() throws Exception {
-        parkingLot.getOrders().add(parkingOrder);
-        when(parkingLotService.findByName("park")).thenReturn(parkingLot);
-        when(orderService.save("park", "plate123")).thenReturn(parkingOrder);
+        doThrow(ParkingLotFullException.class).when(orderService).save("park", "plate123");
         ResultActions resultActions = mockMvc.perform(post("/parkingLot/park/order/plate123"));
 
         resultActions.andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void closeOrder() throws Exception {
+        when(parkingLotService.findByName("park")).thenReturn(parkingLot);
+        when(orderService.save("park", "plate123")).thenReturn(parkingOrder);
+        ResultActions resultActions = mockMvc.perform(patch("/parkingLot/park/order/plate123"));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void closeOrderWhenParkingLotDoesNotExist() throws Exception {
+        doThrow(NotFoundException.class).when(orderService).updateOrder("park", "plate123");
+        ResultActions resultActions = mockMvc.perform(patch("/parkingLot/park/order/plate123"));
+
+        resultActions.andExpect(status().isNotFound());
     }
 }
