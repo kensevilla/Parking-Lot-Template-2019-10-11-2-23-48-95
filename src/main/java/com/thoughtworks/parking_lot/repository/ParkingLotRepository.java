@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ParkingLotRepository  extends JpaRepository<ParkingLot, Long> {
     ParkingLot findOneById(Long id);
 
-    ParkingLot findByNameContaining(String name);
+    ParkingLot findByName(String name);
 }

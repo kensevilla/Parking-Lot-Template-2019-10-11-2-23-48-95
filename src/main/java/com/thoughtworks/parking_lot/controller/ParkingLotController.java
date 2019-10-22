@@ -23,14 +23,14 @@ public class ParkingLotController {
         return parkingLotService.save(parkingLot);
     }
 
-    @DeleteMapping(value = "/{id}", produces = {"application/json"})
-    public ResponseEntity<String> delete(@PathVariable Long id){
-        return parkingLotService.delete(id);
+    @DeleteMapping(value = "/{name}", produces = {"application/json"})
+    public ResponseEntity<String> delete(@PathVariable String name){
+        return parkingLotService.delete(name);
     }
 
-    @GetMapping(value = "/{id}", produces = {"application/json"})
-    public ParkingLot getParkingLot(@PathVariable Long id){
-        return parkingLotService.findOneById(id);
+    @GetMapping(value = "/{name}", produces = {"application/json"})
+    public ParkingLot getParkingLot(@PathVariable String name){
+        return parkingLotService.findByName(name);
     }
 
     @GetMapping(produces = {"application/json"})
@@ -40,7 +40,7 @@ public class ParkingLotController {
 
     @PatchMapping(value= "/{name}",produces = {"application/json"})
     public ParkingLot updateParkingLot(@PathVariable String name, @RequestBody ParkingLot parkingLot){
-        ParkingLot updateParkingLot = parkingLotService.findByNameContaining(name);
+        ParkingLot updateParkingLot = parkingLotService.findByName(name);
         if(updateParkingLot != null){
             updateParkingLot.setCapacity(parkingLot.getCapacity());
         }

@@ -16,14 +16,11 @@ public class ParkingLotService {
         return parkingLotRepository.save(parkingLot);
     }
 
-    public ParkingLot findOneById(Long id){
-        return parkingLotRepository.findOneById(id);
-    }
-
-    public ResponseEntity<String> delete(Long id) {
-        if(parkingLotRepository.findById(id).isPresent()){
-            parkingLotRepository.deleteById(id);
-            return new ResponseEntity<>("Deleted ID "+id, HttpStatus.OK);
+    public ResponseEntity<String> delete(String name) {
+        ParkingLot parkingLot = parkingLotRepository.findByName(name);
+        if(parkingLot != null){
+            parkingLotRepository.delete(parkingLot);
+            return new ResponseEntity<>("Deleted Parking Lot "+name, HttpStatus.OK);
         }
         return new ResponseEntity<>( HttpStatus.NOT_FOUND);
     }
@@ -32,7 +29,7 @@ public class ParkingLotService {
         return  parkingLotRepository.findAll(pageRequest);
     }
 
-    public ParkingLot findByNameContaining(String name) {
-        return parkingLotRepository.findByNameContaining(name);
+    public ParkingLot findByName(String name) {
+        return parkingLotRepository.findByName(name);
     }
 }

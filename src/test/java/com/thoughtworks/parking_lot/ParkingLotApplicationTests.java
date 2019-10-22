@@ -2,8 +2,11 @@ package com.thoughtworks.parking_lot;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.parking_lot.controller.OrderController;
 import com.thoughtworks.parking_lot.controller.ParkingLotController;
 import com.thoughtworks.parking_lot.model.ParkingLot;
+import com.thoughtworks.parking_lot.model.ParkingOrder;
+import com.thoughtworks.parking_lot.service.OrderService;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(ParkingLotController.class)
+@WebMvcTest({ParkingLotController.class})
 @ActiveProfiles(profiles = "test")
 public class ParkingLotApplicationTests {
     @Autowired
@@ -55,7 +58,7 @@ public class ParkingLotApplicationTests {
 
     @Test
     public void deleteParkingLot() throws Exception {
-        when(parkingLotService.findOneById(1L)).thenReturn(parkingLot);
+        when(parkingLotService.findByName("park")).thenReturn(parkingLot);
         ResultActions resultActions = mockMvc.perform(delete("/parkingLot/1"));
 
         resultActions.andExpect(status().isOk());
@@ -63,8 +66,8 @@ public class ParkingLotApplicationTests {
 
     @Test
     public void getParkingLot() throws Exception {
-        when(parkingLotService.findOneById(1L)).thenReturn(parkingLot);
-        ResultActions resultActions = mockMvc.perform(get("/parkingLot/1"));
+        when(parkingLotService.findByName("park")).thenReturn(parkingLot);
+        ResultActions resultActions = mockMvc.perform(get("/parkingLot/park"));
 
         resultActions.andExpect(status().isOk());
     }
@@ -80,7 +83,7 @@ public class ParkingLotApplicationTests {
     public void updateParkingLot() throws Exception {
         ParkingLot newParkingLot = new ParkingLot();
         newParkingLot.setCapacity(50);
-        when(parkingLotService.findByNameContaining("park")).thenReturn(parkingLot);
+        when(parkingLotService.findByName("park")).thenReturn(parkingLot);
         ResultActions resultActions = mockMvc.perform(patch("/parkingLot/park")
                 .content(asJsonString(newParkingLot))
                 .contentType(MediaType.APPLICATION_JSON));

@@ -1,14 +1,29 @@
 package com.thoughtworks.parking_lot.model;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class ParkingLot {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(unique = true)
     private String name;
     private Integer capacity;
     private String location;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<ParkingOrder> orders = new ArrayList<>();
+
+
+    public List<ParkingOrder> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<ParkingOrder> orders) {
+        this.orders = orders;
+    }
 
     public Long getId() {
         return id;
